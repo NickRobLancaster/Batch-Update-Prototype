@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Batch Update Prototype</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body id="appBody">
+    <div class="container-fluid">
+        <div><a class="btn btn-primary btn-lg" role="button" data-toggle="modal" href="#myModal">Bulk Edit</a>
+            <div class="modal fade" role="dialog" tabindex="-1" id="myModal">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <form>
+                            <div class="modal-header" v-on:click="wizard_cancel_all"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                <h4 class="modal-title">Bulk Edits</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-12" v-show="!bulk_edit_disclaimer">
+                                        <div class="row">
+                                            <div class="col-md-12 col-xs-12">
+                                                <div class="alert alert-danger bulk-reassign-alert" role="alert"><span class="disclaimer-alert-text"><i class="fa fa-exclamation-circle tooltip-question-mark fa-lg"></i><strong>ATTENTION: </strong>You are about to perform a Bulk Edit across these selected files. Once completed, <strong>this cannot be undone</strong>. If you still wish to proceed you must acknowledge this notice.</span>
+                                                    <hr>
+                                                    <div class="checkbox"><label><input type="checkbox" name="bulk_edit_disclaimer" value="1" v-model="bulk_edit_disclaimer"><strong>I acknowledge these changes cannot be reversed, please proceed.</strong></label></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" v-show="bulk_edit_disclaimer === true">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h4>Perform Bulk Edit Using Which Files</h4>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="radio"><label><input type="radio" name="bulk_list_or_filter" value="1" v-model="bulk_list_or_filter"><strong>100 </strong>From Filter</label></div>
+                                                        <div class="radio"><label><input type="radio" name="bulk_list_or_filter" value="2" v-model="bulk_list_or_filter"><strong>100 </strong>Selected</label></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" v-if="bulk_list_or_filter == 1 || bulk_list_or_filter == 2">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h4>Type of Bulk Edit</h4>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="checkbox"><label><input type="checkbox" name="bulk_edit_wizard" value="4" v-model="bulk_type_campaign_edit">Bulk Campaign Edit</label></div>
+                                                        <div class="checkbox"><label bulk_type_reassignment=""><input type="checkbox" v-model="bulk_type_action" name="bulk_edit_wizard" value="1">Bulk Action</label></div>
+                                                        <div class="checkbox"><label><input type="checkbox" v-model="bulk_type_reassignment" name="bulk_edit_wizard" value="2">Bulk Reassignment</label></div>
+                                                        <div class="checkbox"><label><input type="checkbox" v-model="bulk_type_select_all" name="bulk_edit_wizard" value="3" v-on:change="bulkTypeSelectAll"><span style="text-decoration: underline;">Select All</span></label></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" v-if="bulk_type_selected == 1 || bulk_type_selected == 2 || bulk_type_selected == 3 || bulk_type_selected == 4">
+                                        <hr>
+                                    </div>
+                                    <div class="col-md-4" v-if="bulk_type_campaign_edit === true || bulk_type_select_all === true">
+                                        <div class="row">
+                                            <div class="col-md-10 col-xs-10">
+                                                <h4>Bulk Campaign Edit</h4>
+                                            </div>
+                                            <div class="col-md-2 col-xs-2">
+                                                <h4><i class="fa fa-question-circle fa-lg tooltip-question-mark-title text-info" v-on:mouseover="campaign_is_hovered = true" v-on:mouseleave="campaign_is_hovered = false"></i></h4>
+                                            </div>
+                                            <div class="col-md-12 tooltip-alert-position">
+                                                <div class="alert alert-info tooltip-alert" role="alert" v-show="campaign_is_hovered"><i class="fa fa-question-circle tooltip-question-mark"></i><span>Make a bulk edit to the campaign that is assigned to the case files in your desired list of contacts.</span></div>
+                                            </div>
+                                            <div class="col-md-12 field-item">
+                                                <div class="row">
+                                                    <div class="col-md-4 col-xs-4"><label>Campaign</label></div>
+                                                    <div class="col-md-8 col-xs-8"><select class="form-control">
+                                                            <optgroup label="This is a group">
+                                                                <option value="12" selected="">This is item 1</option>
+                                                                <option value="13">This is item 2</option>
+                                                                <option value="14">This is item 3</option>
+                                                            </optgroup>
+                                                        </select></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" v-if="bulk_type_action === true || bulk_type_select_all === true">
+                                        <div class="row">
+                                            <div class="col-md-10 col-xs-10">
+                                                <h4>Bulk Action</h4>
+                                            </div>
+                                            <div class="col-md-2 col-xs-2">
+                                                <h4><i class="fa fa-question-circle fa-lg tooltip-question-mark-title text-info" v-on:mouseover="action_is_hovered = true" v-on:mouseleave="action_is_hovered = false"></i></h4>
+                                            </div>
+                                            <div class="col-md-12 tooltip-alert-position" v-show="action_is_hovered">
+                                                <div class="alert alert-info tooltip-alert" role="alert"><span><i class="fa fa-question-circle tooltip-question-mark"></i>Make bulk edits across a desired list of contacts using your Preconfigured Actions.</span></div>
+                                            </div>
+                                            <div class="col-md-12 field-item">
+                                                <div class="row">
+                                                    <div class="col-md-4 col-xs-4"><label>Action</label></div>
+                                                    <div class="col-md-8 col-xs-8"><select class="form-control">
+                                                            <optgroup label="This is a group">
+                                                                <option value="12" selected="">This is item 1</option>
+                                                                <option value="13">This is item 2</option>
+                                                                <option value="14">This is item 3</option>
+                                                            </optgroup>
+                                                        </select></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" v-if="bulk_type_reassignment === true || bulk_type_select_all === true">
+                                        <div class="row">
+                                            <div class="col-md-10 col-xs-10">
+                                                <h4>Bulk Reassign</h4>
+                                            </div>
+                                            <div class="col-md-2 col-xs-2">
+                                                <h4><i class="fa fa-question-circle fa-lg tooltip-question-mark-title text-info" v-on:mouseover="reassign_is_hovered = true" v-on:mouseleave="reassign_is_hovered = false"></i></h4>
+                                            </div>
+                                            <div class="col-md-12 tooltip-alert-position" v-show="reassign_is_hovered">
+                                                <div class="alert alert-info bulk-reassign-alert tooltip-alert" role="alert"><span><i class="fa fa-question-circle tooltip-question-mark"></i>Bulk edit the Users assigned to case files across a desired list of contacts.</span></div>
+                                            </div>
+                                            <div class="col-md-12 bulk-reassign-radio-buttons reassign-radio-buttons">
+                                                <div class="radio" style="margin-top: 0px;"><label><input type="radio" name="bulk_reassign_type_selected" value="1" v-model="bulk_reassign_type_selected">Distribute All to One User</label></div>
+                                                <div class="radio"><label><input type="radio" name="bulk_reassign_type_selected" value="2" v-model="bulk_reassign_type_selected">Distribute Evenly to a Group of Users</label></div>
+                                            </div>
+                                            <div class="col-md-12 field-item" v-if="bulk_reassign_type_selected == 1 || bulk_reassign_type_selected == 2">
+                                                <div class="row">
+                                                    <div class="col-md-4 col-xs-4"><label>Department</label></div>
+                                                    <div class="col-md-8 col-xs-8"><select class="form-control">
+                                                            <optgroup label="This is a group">
+                                                                <option value="12" selected="">This is item 1</option>
+                                                                <option value="13">This is item 2</option>
+                                                                <option value="14">This is item 3</option>
+                                                            </optgroup>
+                                                        </select></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 field-item" v-if="bulk_reassign_type_selected == 1">
+                                                <div class="row">
+                                                    <div class="col-md-4 col-xs-4"><label>User</label></div>
+                                                    <div class="col-md-8 col-xs-8"><select class="form-control">
+                                                            <optgroup label="This is a group">
+                                                                <option value="12" selected="">This is item 1</option>
+                                                                <option value="13">This is item 2</option>
+                                                                <option value="14">This is item 3</option>
+                                                            </optgroup>
+                                                        </select></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 field-item" v-if="bulk_reassign_type_selected == 2">
+                                                <div class="row">
+                                                    <div class="col-md-4 col-xs-4"><label>Distribution Group</label></div>
+                                                    <div class="col-md-8 col-xs-8"><select class="form-control">
+                                                            <optgroup label="This is a group">
+                                                                <option value="12" selected="">This is item 1</option>
+                                                                <option value="13">This is item 2</option>
+                                                                <option value="14">This is item 3</option>
+                                                            </optgroup>
+                                                        </select></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer"><button class="btn btn-warning" data-dismiss="modal" type="button" v-on:click="wizard_cancel_all">Abort</button><button class="btn btn-danger" type="button" v-show="bulk_edit_disclaimer === true">Run Batch</button></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+
+</html>

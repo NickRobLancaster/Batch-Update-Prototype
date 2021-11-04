@@ -1,0 +1,30 @@
+.col-md-12.field-item {
+  margin-bottom: 10px;
+}
+
+.col-md-12.bulk-reassign-radio-buttons {
+  margin-bottom: 5px;
+  padding-top: 0px;
+}
+
+.tooltip-question-mark {
+  margin-right: 10px;
+}
+
+.tooltip-alert-position {
+  position: absolute;
+  top: -90px;
+}
+
+.tooltip-alert {
+  margin-bottom: 0px;
+}
+
+.disclaimer-alert-col {
+  padding-bottom: 0px;
+}
+
+.bulk-reassign-alert {
+  margin-bottom: 0px;
+}
+
